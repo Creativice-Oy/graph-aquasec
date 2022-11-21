@@ -1,3 +1,11 @@
+export type AquaSecPage<T> = {
+  current_page: number;
+  next_page: number;
+  returned_count: number;
+  total_count: number;
+  data: T[];
+};
+
 export type AquaSecAccount = {
   id: number;
   stripe_id: string | null;
@@ -58,3 +66,55 @@ export type AquaSecApiKey = {
   iac_token: boolean;
   ip_addresses: string[] | null;
 };
+
+export type AquaSecAuth = {
+  data: {
+    token: string;
+  };
+};
+
+export type AquaSecRepository = {
+  last_scan: {
+    branch: string;
+    build_system: string;
+    git_user: string;
+    high_severity_count: number;
+    impacted_file_count: number;
+    low_severity_count: number;
+    medium_severity_count: number;
+    policy_failure_count: number;
+    policy_pass_count: number;
+    policy_warning_count: number;
+    scan_date: string;
+    scan_id: string;
+    scm_link: string;
+    triggered_by: string;
+    unknown_severity_count: number;
+  };
+  name: string;
+  repository_id: string;
+  scm_id: string;
+  source: string;
+};
+
+export type AquaSecRepositoriesResponse = AquaSecPage<AquaSecRepository>;
+
+export type AquaSecDetection = {
+  avd_id: string;
+  detection_count: number;
+  highest_severity: string;
+  title: string;
+};
+
+export type AquaSecDetectionsResponse = AquaSecPage<AquaSecDetection>;
+
+export type AquaSecDetectionInstance = {
+  highest_severity: string;
+  impacted_files: number;
+  repository_id: string;
+  scan_date: string;
+  scan_id: string;
+};
+
+export type AquaSecDetectionInstancesResponse =
+  AquaSecPage<AquaSecDetectionInstance>;

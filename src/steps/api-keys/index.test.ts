@@ -1,60 +1,25 @@
-import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
+import {
+  executeStepWithDependencies,
+  Recording,
+} from '@jupiterone/integration-sdk-testing';
 
-import { IntegrationConfig } from '../../config';
-import { integrationConfig, withRecording } from '../../../test/config';
-import { fetchAccountDetails } from '../account';
-import { fetchApiKeys } from '.';
+import { buildStepTestConfigForStep } from '../../../test/config';
+import { setupProjectRecording } from '../../../test/recording';
+import { Steps } from '../constants';
 
-describe('#fetchApiKeys', () => {
-  test(
-    'should collect data',
-    withRecording('fetchApiKeys', __dirname, async () => {
-      const context = createMockStepExecutionContext<IntegrationConfig>({
-        instanceConfig: integrationConfig,
-      });
+let recording: Recording;
 
-      await fetchAccountDetails(context);
-      await fetchApiKeys(context);
+afterEach(async () => {
+  await recording.stop();
+});
 
-      expect({
-        numCollectedEntities: context.jobState.collectedEntities.length,
-        numCollectedRelationships:
-          context.jobState.collectedRelationships.length,
-        collectedEntities: context.jobState.collectedEntities,
-        collectedRelationships: context.jobState.collectedRelationships,
-        encounteredTypes: context.jobState.encounteredTypes,
-      }).toMatchSnapshot();
+test('#fetchApiKeys', async () => {
+  recording = setupProjectRecording({
+    directory: __dirname,
+    name: 'fetch-api-keys',
+  });
 
-      const apiKeyEntities = context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('AccessKey'),
-      );
-
-      expect(apiKeyEntities.length).toBeGreaterThan(0);
-      expect(apiKeyEntities).toMatchGraphObjectSchema({
-        _class: ['AccessKey'],
-        schema: {
-          additionalProperties: false,
-          properties: {
-            _type: { const: 'aquasec_api_key' },
-            _rawData: {
-              type: 'array',
-              items: { type: 'object' },
-            },
-            id: { type: 'string' },
-            name: { type: 'string' },
-            description: { type: 'string' },
-            whitelisted: { type: 'boolean' },
-            scansPerMonth: { type: 'number' },
-            accountId: { type: 'number' },
-            groupId: { type: 'number' },
-            iacToken: { type: 'boolean' },
-            ipAddresses: {
-              type: 'array',
-              items: { type: 'string' },
-            },
-          },
-        },
-      });
-    }),
-  );
+  const stepConfig = buildStepTestConfigForStep(Steps.API_KEYS);
+  const stepResult = await executeStepWithDependencies(stepConfig);
+  expect(stepResult).toMatchStepMetadata(stepConfig);
 });

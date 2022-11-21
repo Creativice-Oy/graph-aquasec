@@ -8,6 +8,26 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `ACCOUNT_EMAIL` and `ACCOUNT_PASSWORD` to the list of environment
+  variables. They are required for accessing the API responsible for fetching
+  repositories and detections data.
+
+- The following entities are **now** created:
+
+| Resources  | Entity `_type`       | Entity `_class` |
+| ---------- | -------------------- | --------------- |
+| Detection  | `aquasec_detection`  | `Finding`       |
+| Repository | `aquasec_repository` | `CodeRepo`      |
+
+- The following relationships are **now** created:
+
+| Source Entity `_type` | Relationship `_class` | Target Entity `_type` |
+| --------------------- | --------------------- | --------------------- |
+| `aquasec_account`     | **HAS**               | `aquasec_repository`  |
+| `aquasec_repository`  | **HAS**               | `aquasec_detection`   |
+
 ## [1.0.1] - 2022-01-31
 
 ### Fixed

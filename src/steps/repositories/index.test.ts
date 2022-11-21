@@ -13,13 +13,13 @@ afterEach(async () => {
   await recording.stop();
 });
 
-test('#fetchGroups', async () => {
+test('#fetchRepositories', async () => {
   recording = setupProjectRecording({
     directory: __dirname,
-    name: 'fetch-groups',
+    name: 'fetch-repositories',
   });
 
-  const stepConfig = buildStepTestConfigForStep(Steps.GROUPS);
+  const stepConfig = buildStepTestConfigForStep(Steps.REPOSITORIES);
   const stepResult = await executeStepWithDependencies(stepConfig);
   expect(stepResult).toMatchStepMetadata(stepConfig);
 });
